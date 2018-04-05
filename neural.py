@@ -19,55 +19,18 @@ import numpy as np
 class Network(object):
 
     def __init__(self, sizes):
-        """
-        The list ``sizes`` contains the number of neurons in the
-        respective layers of the network.  For example, if the list
-        was [2, 3, 1] then it would be a three-layer network, with the
-        first layer containing 2 neurons, the second layer 3 neurons,
-        and the third layer 1 neuron.
-        """
         self.num_layers = len(sizes)
         self.sizes = sizes
-
-        """
-        Biases are values added after a weight vector has been applied to
-        an input/neuron vector. As such, we only need one for each element in current layer.
-        As such, a bias is simply a list of scalar values, and the ``biases`` data member is
-        a list of these bias vectors.
-        """
-
         self.biases = [np.random.randn(y, 1) for y in sizes[1:]]
-
-        """
-        Each neuron is a linear combination of the neurons in the previous layer, so we would need a list
-        that is the size of the # of neurons in the previous layer. We also need a unique set of these weights for
-        each neuron in the current layer. So for each layer we have a list of lists (2D array/matrix). The ``weights``
-        data member of the Network class is a list of these matrices for each layer (excluding our first input layer).
-        Each matrix will be of shape (# of elements in current layer, #elements in previous layer)
-        """
-
         self.weights = [np.random.randn(y, x)
                         for x, y in zip(sizes[:-1], sizes[1:])]
 
-    """
-    This function governs the mechanical action of prediction (or attempted prediction)
-    in a fully connected neural network. If the weights and biases are correctly set, this
-    process of repeatedly applying dot product, vector addition, and the sigmoid function
-    will yield an ideal result (correct prediction).
-    """
     def feedforward(self, a):
         """Return the output of the network if ``a`` is input."""
         for b, w in zip(self.biases, self.weights):
             a = sigmoid(np.dot(w, a)+b)
         return a
 
-    """
-    An ``epoch`` is a single pass through all of the training data provided for the neural
-    network. Oftentimes, data gets reshuffled and passed to the network multiple times, leading
-    to multiple epochs.
-    eta is the ``learning rate`` of the function that can make it approach a minimum more rapidly at the risk
-    of skipping it entirely.
-    """
     def SGD(self, training_data, epochs, mini_batch_size, eta,
             test_data=None):
         """Train the neural network using mini-batch stochastic
